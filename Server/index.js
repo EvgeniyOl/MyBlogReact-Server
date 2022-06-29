@@ -15,9 +15,7 @@ import { userController, postController } from "./controllers/index.js";
 import { checkAuth, handleValidationsErrors } from "./utils/index.js";
 
 mongoose
-  .connect(
-    "mongodb+srv://admin:wwwwww@cluster0.fupaj.mongodb.net/blog?retryWrites=true&w=majority" //подключаем базу данных
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("DB ok"))
   .catch((err) => console.log("DB error", err));
 
@@ -36,7 +34,6 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
-
 
 app.use(express.json());
 app.use(cors());
@@ -62,7 +59,6 @@ app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   });
 });
 
-
 app.get("/tags", postController.getLastTags);
 app.get("/posts", postController.getAll);
 app.get("/posts/tags", postController.getLastTags);
@@ -83,7 +79,7 @@ app.patch(
   postController.update
 );
 
-app.listen(4444, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
   //слушаем нужный порт
   if (err) {
     console.log(err);
